@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 
 export const InfiniteMovingCards = ({
   items,
@@ -39,12 +40,12 @@ export const InfiniteMovingCards = ({
       getSpeed();
       setStart(true);
     }
-  }, [direction, speed]);
+  }, [direction, speed, getDirection, getSpeed]);
   useEffect(() => {
     addAnimation();
   }, [addAnimation]);
   const [start, setStart] = useState(false);
-  const getDirection = () => {
+  const getDirection = useCallback(() => {
     if (containerRef.current) {
       if (direction === "left") {
         containerRef.current.style.setProperty(
@@ -58,8 +59,8 @@ export const InfiniteMovingCards = ({
         );
       }
     }
-  };
-  const getSpeed = () => {
+  }, [direction]);
+  const getSpeed = useCallback(() => {
     if (containerRef.current) {
       if (speed === "fast") {
         containerRef.current.style.setProperty("--animation-duration", "20s");
@@ -69,7 +70,7 @@ export const InfiniteMovingCards = ({
         containerRef.current.style.setProperty("--animation-duration", "80s");
       }
     }
-  };
+  }, [speed]);
   return (
     <div
       ref={containerRef}
@@ -116,11 +117,13 @@ export const InfiniteMovingCards = ({
               </span>
               <div className="relative z-20 mt-6 flex flex-row items-center">
                 {/* add this div for the profile img */}
-                <div className="me-3 w-12 h-12 rounded-full overflow-hidden ring-1 ring-white/10 bg-black/30">
-                  <img
+                <div className="me-3 w-12 h-12 rounded-full overflow-hidden ring-1 ring-white/10 bg-black/30 relative">
+                  <Image
                     src={item.image || "/profile.svg"}
                     alt="profile"
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="48px"
+                    className="object-cover"
                   />
                 </div>
                 <span className="flex flex-col gap-1">

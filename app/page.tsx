@@ -5,6 +5,7 @@ import { i18n } from "@/data";
 import { useLanguage } from "@/app/provider";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 import Hero from "@/components/Hero";
 import Grid from "@/components/Grid";
@@ -82,7 +83,14 @@ const Home = () => {
                   background: "radial-gradient(closest-side, rgba(59,130,246,0.20), transparent 70%)",
                 }}
               />
-              <img src="/kaiop.png" alt="foto kaio" className="relative z-10 w-full h-full object-cover" />
+              <Image
+                src="/kaiop.png"
+                alt="foto kaio"
+                fill
+                sizes="(min-width: 768px) 320px, 100vw"
+                className="relative z-10 object-cover"
+                priority
+              />
             </div>
             <div className="md:max-w-sm max-w-sm md:text-left text-center mt-10 md:mt-0">
               <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-3">
