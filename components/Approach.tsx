@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { i18n } from "@/data";
 import { useLanguage } from "@/app/provider";
