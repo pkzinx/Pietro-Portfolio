@@ -5,6 +5,8 @@ import { IoCopyOutline } from "react-icons/io5";
 import Lottie from "react-lottie";
 
 import { cn } from "@/lib/utils";
+import { i18n } from "@/data";
+import { useLanguage } from "@/app/provider";
 
 
 import { BackgroundGradientAnimation } from "./GradientBg";
@@ -52,8 +54,9 @@ export const BentoGridItem = ({
   titleClassName?: string;
   spareImg?: string;
 }) => {
-  const leftLists = ["ReactJS", "Express", "Typescript"];
-  const rightLists = ["VueJS", "NuxtJS", "GraphQL"];
+  const { lang } = useLanguage();
+  const leftLists = i18n[lang as "en" | "pt"].sections.about.techLeft;
+  const rightLists = i18n[lang as "en" | "pt"].sections.about.techRight;
 
   const [copied, setCopied] = useState(false);
 
@@ -67,7 +70,7 @@ export const BentoGridItem = ({
   };
 
   const handleCopy = () => {
-    const text = "hsu@jsmastery.pro";
+    const text = "kaiopietrodl@gmail.com";
     navigator.clipboard.writeText(text);
     setCopied(true);
   };
@@ -184,7 +187,7 @@ export const BentoGridItem = ({
               </div>
 
               <MagicButton
-                title={copied ? "Email is Copied!" : "Copy my email address"}
+                title={copied ? i18n[lang as "en" | "pt"].sections.bento.copyDone : i18n[lang as "en" | "pt"].sections.bento.copyIdle}
                 icon={<IoCopyOutline />}
                 position="left"
                 handleClick={handleCopy}

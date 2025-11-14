@@ -1,10 +1,15 @@
+"use client";
 import { FaLocationArrow } from "react-icons/fa6";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { i18n } from "@/data";
+import { useLanguage } from "@/app/provider";
 
 import MagicButton from "./MagicButton";
 import { Spotlight } from "./ui/Spotlight";
-import { TextGenerateEffect } from "./ui/TextGenerateEffect";
 
 const Hero = () => {
+  const { lang } = useLanguage();
   return (
     <div className="pb-20 pt-36">
       {/**
@@ -42,27 +47,15 @@ const Hero = () => {
 
       <div className="flex justify-center relative my-20 z-10">
         <div className="max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col items-center justify-center">
-          <p className="uppercase tracking-widest text-xs text-center text-blue-100 max-w-80">
-            Dynamic Web Magic with Next.js
-          </p>
+          <HeroTagline />
 
-          {/**
-           *  Link: https://ui.aceternity.com/components/text-generate-effect
-           *
-           *  change md:text-6xl, add more responsive code
-           */}
-          <TextGenerateEffect
-            words="Transforming Concepts into Seamless User Experiences"
-            className="text-center text-[40px] md:text-5xl lg:text-6xl"
-          />
+          <HeroTitle />
 
-          <p className="text-center md:tracking-wider mb-4 text-sm md:text-lg lg:text-2xl">
-            Hi! I&apos;m Adrian, a Next.js Developer based in Croatia.
-          </p>
+          <HeroSubtitle />
 
           <a href="#about">
             <MagicButton
-              title="Show my work"
+              title={i18n[lang as "en" | "pt"].hero.showWork}
               icon={<FaLocationArrow />}
               position="right"
             />
@@ -74,3 +67,57 @@ const Hero = () => {
 };
 
 export default Hero;
+
+const HeroTitle = () => {
+  const { lang } = useLanguage();
+  return (
+    <div className="text-center text-[40px] md:text-5xl lg:text-6xl font-bold leading-snug tracking-wide dark:text-white text-black">
+      <span>{i18n[lang as "en" | "pt"].hero.prefix} </span>
+      <span className="inline-block text-purple">
+        <MorphingSuffix lang={lang as "en" | "pt"} />
+      </span>
+    </div>
+  );
+};
+
+const MorphingSuffix = ({ lang }: { lang: "en" | "pt" }) => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % i18n[lang].hero.suffixes.length);
+    }, 2600);
+    return () => clearInterval(id);
+  }, [lang]);
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.span
+        key={index}
+        initial={{ opacity: 0, y: 8, filter: "blur(8px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        exit={{ opacity: 0, y: -8, filter: "blur(8px)" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        {i18n[lang].hero.suffixes[index]}
+      </motion.span>
+    </AnimatePresence>
+  );
+};
+const HeroTagline = () => {
+  const { lang } = useLanguage();
+  return (
+    <p className="uppercase tracking-widest text-xs text-center text-blue-100 max-w-80">
+      {i18n[lang as "en" | "pt"].hero.tagline}
+    </p>
+  );
+};
+
+const HeroSubtitle = () => {
+  const { lang } = useLanguage();
+  return (
+    <p className="text-center md:tracking-wider mb-4 text-sm md:text-lg lg:text-2xl">
+      {i18n[lang as "en" | "pt"].hero.subtitle}
+    </p>
+  );
+};

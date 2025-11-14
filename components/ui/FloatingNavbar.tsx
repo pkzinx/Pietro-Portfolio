@@ -8,12 +8,16 @@ import {
 } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/app/provider";
+import { i18n } from "@/data";
+import type { NavKey } from "@/data";
 
 export const FloatingNav = ({
   navItems,
   className,
 }: {
   navItems: {
+    key: NavKey;
     name: string;
     link: string;
     icon?: JSX.Element;
@@ -21,6 +25,7 @@ export const FloatingNav = ({
   className?: string;
 }) => {
   const { scrollYProgress } = useScroll();
+  const { lang, setLang } = useLanguage();
 
   // set true for the initial state so that nav bar is visible in the hero section
   const [visible, setVisible] = useState(true);
@@ -71,7 +76,7 @@ export const FloatingNav = ({
           border: "1px solid rgba(255, 255, 255, 0.125)",
         }}
       >
-        {navItems.map((navItem: any, idx: number) => (
+        {navItems.map((navItem, idx) => (
           <Link
             key={`link=${idx}`}
             href={navItem.link}
@@ -82,9 +87,37 @@ export const FloatingNav = ({
             <span className="block sm:hidden">{navItem.icon}</span>
             {/* add !cursor-pointer */}
             {/* remove hidden sm:block for the mobile responsive */}
-            <span className=" text-sm !cursor-pointer">{navItem.name}</span>
+            <span className=" text-sm !cursor-pointer">
+              {i18n[lang as "en" | "pt"].nav[navItem.key]}
+            </span>
           </Link>
         ))}
+        <div className="pl-4">
+          <div className="relative flex items-center w-[96px] h-8 rounded-full border border-white/20 bg-white/10 backdrop-blur-md px-1">
+            <motion.div
+              className="absolute top-1 bottom-1 rounded-full bg-white/20"
+              initial={false}
+              animate={{ x: lang === "en" ? 44 : 0, width: 44 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            />
+            <button
+              aria-label="Português"
+              className={`relative z-10 w-11 text-xs font-semibold ${lang === "pt" ? "text-white" : "text-white/60"}`}
+              onClick={() => setLang("pt")}
+              title="PT"
+            >
+              PT
+            </button>
+            <button
+              aria-label="English"
+              className={`relative z-10 w-11 text-xs font-semibold ${lang === "en" ? "text-white" : "text-white/60"}`}
+              onClick={() => setLang("en")}
+              title="EN"
+            >
+              EN
+            </button>
+          </div>
+        </div>
         {/* remove this login btn */}
         {/* <button className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full">
           <span>Login</span>

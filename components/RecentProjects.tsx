@@ -1,26 +1,44 @@
 "use client";
 
 import { FaLocationArrow } from "react-icons/fa6";
+import React, { useState } from "react";
 
-import { projects } from "@/data";
+import { projects, i18n } from "@/data";
+import { useLanguage } from "@/app/provider";
 import { PinContainer } from "./ui/Pin";
+import ConfirmModal from "./ui/ConfirmModal";
 
 const RecentProjects = () => {
+  const { lang } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const [selectedLink, setSelectedLink] = useState<string | null>(null);
+  const t = i18n[lang as "en" | "pt"].sections.modal;
+  const handleCardClick = (link: string) => {
+    setSelectedLink(link);
+    setOpen(true);
+  };
+  const handleConfirm = () => {
+    if (selectedLink) {
+      window.open(selectedLink, "_blank", "noopener,noreferrer");
+    }
+    setOpen(false);
+  };
   return (
     <div className="py-20">
       <h1 className="heading">
-        A small selection of{" "}
-        <span className="text-purple">recent projects</span>
+        {i18n[lang as "en" | "pt"].sections.recent.heading1}{" "}
+        <span className="text-purple">{i18n[lang as "en" | "pt"].sections.recent.heading2}</span>
       </h1>
       <div className="flex flex-wrap items-center justify-center p-4 gap-16 mt-10">
         {projects.map((item) => (
           <div
             className="lg:min-h-[32.5rem] h-[25rem] flex items-center justify-center sm:w-96 w-[80vw]"
             key={item.id}
+            onClick={() => handleCardClick(item.link)}
           >
             <PinContainer
-              title="/ui.aceternity.com"
-              href="https://twitter.com/mannupaaji"
+              title={item.link}
+              href={undefined}
             >
               <div className="relative flex items-center justify-center sm:w-96 w-[80vw] overflow-hidden h-[20vh] lg:h-[30vh] mb-10">
                 <div
@@ -47,7 +65,7 @@ const RecentProjects = () => {
                   margin: "1vh 0",
                 }}
               >
-                {item.des}
+                {lang === "pt" ? (item as any).desPt : (item as any).desEn}
               </p>
 
               <div className="flex items-center justify-between mt-7 mb-3">
@@ -67,7 +85,7 @@ const RecentProjects = () => {
 
                 <div className="flex justify-center items-center">
                   <p className="flex lg:text-xl md:text-xs text-sm text-purple">
-                    Check Live Site
+                    {i18n[lang as "en" | "pt"].sections.recent.cta}
                   </p>
                   <FaLocationArrow className="ms-3" color="#CBACF9" />
                 </div>
@@ -76,6 +94,16 @@ const RecentProjects = () => {
           </div>
         ))}
       </div>
+      <ConfirmModal
+        open={open}
+        title={t.title}
+        message={t.message}
+        link={selectedLink || undefined}
+        acceptLabel={t.accept}
+        laterLabel={t.later}
+        onConfirm={handleConfirm}
+        onClose={() => setOpen(false)}
+      />
     </div>
   );
 };
