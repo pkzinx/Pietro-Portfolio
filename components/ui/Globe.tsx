@@ -61,6 +61,21 @@ interface WorldProps {
 let numbersOfRings = [0];
 
 export function Globe({ globeConfig, data }: WorldProps) {
+  const sanitize = (arr: Position[]) =>
+    arr
+      .filter((d) =>
+        [d.startLat, d.startLng, d.endLat, d.endLng, d.arcAlt].every((n) =>
+          Number.isFinite(n as number)
+        )
+      )
+      .map((d) => ({
+        ...d,
+        startLat: Math.max(-90, Math.min(90, d.startLat)),
+        endLat: Math.max(-90, Math.min(90, d.endLat)),
+        startLng: Math.max(-180, Math.min(180, d.startLng)),
+        endLng: Math.max(-180, Math.min(180, d.endLng)),
+        arcAlt: Math.max(0, d.arcAlt),
+      }));
   const [globeData, setGlobeData] = useState<
     | {
         size: number;
@@ -114,7 +129,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
   };
 
   const _buildData = () => {
-    const arcs = data;
+    const arcs = sanitize(data);
     let points = [];
     for (let i = 0; i < arcs.length; i++) {
       const arc = arcs[i];
@@ -166,9 +181,10 @@ export function Globe({ globeConfig, data }: WorldProps) {
 
   const startAnimation = () => {
     if (!globeRef.current || !globeData) return;
+    const arcs = sanitize(data);
 
     globeRef.current
-      .arcsData(data)
+      .arcsData(arcs)
       .arcStartLat((d) => (d as { startLat: number }).startLat * 1)
       .arcStartLng((d) => (d as { startLng: number }).startLng * 1)
       .arcEndLat((d) => (d as { endLat: number }).endLat * 1)
@@ -186,7 +202,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
       .arcDashAnimateTime((e) => defaultProps.arcTime);
 
     globeRef.current
-      .pointsData(data)
+      .pointsData(arcs)
       .pointColor((e) => (e as { color: string }).color)
       .pointsMerge(true)
       .pointAltitude(0.0)
